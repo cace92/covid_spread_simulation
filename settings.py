@@ -1,23 +1,27 @@
 
 import numpy as np
 # SETTING VALUES----------------------------------------------------------------
+# Time properties
+N_steps = 100
+frame_duration = 100
+
 # Environment properties--------------------------------------------------------
-Xdim = 10
-Ydim = 10
+Xdim = 50
+Ydim = 50
 
 # People properties
-N_students = 2
-N_workers = 2
-N_retireds = 2
+N_students = 10
+N_workers = 10
+N_retireds = 10
 
 N_people = N_students + N_workers + N_retireds
 
 # Places properties
-N_schools = 1
-N_jobs = 1
-N_sports = 1
-N_shops = 1
-N_transports = 2
+N_schools = 2
+N_jobs = 2
+N_sports = 2
+N_shops = 2
+N_transports = 4
 
 N_places = N_schools + N_jobs + N_sports + N_shops + N_transports
 
@@ -52,10 +56,30 @@ for i in range(N_transports):
     stud_trans_mat.append(from_trans_list)
 
 # Workers
-# Never use public transports
-# Probabilities: (moving from places locations)
-#  Home Schools Jobs Sports Shops
-
+# Always use public transports
+# Probabilities: (moving from transport locations)
+# Home Schools Jobs Sports Shops
+prob = [0.30, 0, 0.40, 0.10, 0.20]
+work_trans_mat = []
+N_places_list = [1, N_schools, N_jobs, N_sports, N_shops]
+from_trans_list = [0]*(1+N_places)
+pos = 0
+for i in range(len(N_places_list)):
+    choice = pos + np.random.randint(0, N_places_list[i])
+    from_trans_list[choice] = prob[i]
+    pos += N_places_list[i]
+temp = []
+for i in range(N_places+1):
+    if i < (N_places+1-N_transports):
+        temp.append(0)
+    else:
+        temp.append(0.5/N_transports)
+for i in range(N_places+1-N_transports):
+    temp_ = temp[:]
+    temp_[i] = 0.5
+    work_trans_mat.append(temp_)
+for i in range(N_transports):
+    work_trans_mat.append(from_trans_list)
 
 # Retireds
 # Always use public transports
@@ -85,4 +109,3 @@ for i in range(N_transports):
 ret_trans_mat[0][0] = 0.7
 for i in range(N_transports):
     ret_trans_mat[0][N_places-N_transports+1+i] = 0.3/N_transports
-print(ret_trans_mat)
