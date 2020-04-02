@@ -3,7 +3,7 @@ import numpy as np
 # Class defining a person
 class person:
     # Constructor method
-    def __init__(self, id, environment_dim, places, trans_matrix):
+    def __init__(self, id, environment_dim, places, trans_matrix, type):
         # Define the id
         self.id = id
         # Define the home position at random, at beginning coincide with actual position
@@ -16,6 +16,8 @@ class person:
         self.places = [self.position] + places
         # Define transition matrix
         self.trans_matrix = trans_matrix
+        # Define type
+        self.type = type
         # Define first next goal
         self.next_goal()
 
@@ -43,7 +45,6 @@ class person:
     # Representation method
     def __repr__(self):
         return 'ID: '+str(self.id)+' PosX: '+str(self.position[0])+' PosY: '+str(self.position[1])+' GoalX: '+str(self.places[self.goal][0])+' GoalY: '+str(self.places[self.goal][1])
-
 
 # Function computing random integer according to a distribution as list
 def rand_from_list(p):
