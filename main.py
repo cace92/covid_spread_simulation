@@ -9,16 +9,16 @@ from classes import person
 
 N_steps = 10
 N_people = 2
-environment_dim = [10, 10]
+environment_dim = [set.Xdim, set.Ydim]
 N_places = 3
+# Places creation
 places = []
-o = np.random.randint(0, environment_dim[0], size=(1, N_places))
-v = np.random.randint(0, environment_dim[1], size=(1, N_places))
-for i in range(N_places):
-    places.append(np.asarray([o[0, i], v[0, i]]))
-trans_matrix = (1/6)*np.ones(shape=(N_places+1, N_places+1))
-np.fill_diagonal(trans_matrix, 0.5)
-trans_matrix = trans_matrix.tolist()
+for j in [set.N_schools, set.N_jobs, set.N_sports, set.N_sports, set.N_shops, set.N_transports]
+    o = np.random.randint(0, environment_dim[0], size=(1, j))
+    v = np.random.randint(0, environment_dim[1], size=(1, j))
+    for i in range(j)
+        places.append(np.asarray([o[0, i], v[0, i]]))
+
 # People creation as a list of persons
 people = []
 for i in range(N_people):
