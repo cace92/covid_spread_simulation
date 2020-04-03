@@ -1,30 +1,33 @@
-
-import numpy as np
 # SETTING VALUES----------------------------------------------------------------
 # Time properties
-N_steps = 100
+N_steps = 10
 frame_duration = 100
 
-# Environment properties--------------------------------------------------------
-Xdim = 50
-Ydim = 50
+# Infection properties
+infection_duration = 5
+R_0 = 2
+
+# Environment properties
+Xdim = 10
+Ydim = 10
 
 # People properties
-N_students = 10
-N_workers = 10
-N_retireds = 10
+N_students = 2
+N_workers = 2
+N_retireds = 2
 
 N_people = N_students + N_workers + N_retireds
 
 # Places properties
-N_schools = 2
-N_jobs = 2
-N_sports = 2
-N_shops = 2
-N_transports = 4
+N_schools = 1
+N_jobs = 1
+N_sports = 1
+N_shops = 1
+N_transports = 2
 
 N_places = N_schools + N_jobs + N_sports + N_shops + N_transports
 
+import numpy as np
 # Transition matrices-----------------------------------------------------------
 # Order: Home, Schools, Jobs, Sports, Shops, Transports
 # The probabilities of remaining in same place for the next step is always 1/2 except for transports
