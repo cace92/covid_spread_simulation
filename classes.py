@@ -3,7 +3,7 @@ import numpy as np
 # Class defining a person
 class person:
     # Constructor method
-    def __init__(self, id, environment_dim, places, trans_matrix, type):
+    def __init__(self, id, environment_dim, places, trans_matrix, type, inf_status):
         # Define the id
         self.id = id
         # Define the home position at random, at beginning coincide with actual position
@@ -18,6 +18,8 @@ class person:
         self.trans_matrix = trans_matrix
         # Define type
         self.type = type
+        # Define infection status
+        self.inf_status = inf_status # 0: healty, >0: infected, >=infection_duration: immune
         # Define first next goal
         self.next_goal()
 
