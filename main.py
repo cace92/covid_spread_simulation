@@ -22,8 +22,19 @@ def check_infection(people, places, R_0, infection_duration):
                     healthy_in_place.append(p)
         N_infected = len(infected_in_place)
         N_healthy = len(healthy_in_place)
-        print('X: '+str(place['X'])+' Y: '+str(place['Y']))
-        print(N_healthy)
+        N_new_infected = 0
+        if N_infected > 0:
+            # Number of new infected drawn from a binomial distribution
+            N_new_infected = min(np.random.binomial(n=N_healthy, p=R_0/infection_duration), N_healthy)
+            new_infected = list(np.random.choice(healthy_in_place, size=N_new_infected, replace=False))
+            for p in new_infected:
+                people[p].inf_status = 1
+                if people[p].type == 'healthy_student':
+                    people[p].type = 'infected_student'
+                elif people[p].type == 'healthy_worker':
+                    people[p].type = 'infected_worker'
+                elif people[p].type == 'healthy_retired':
+                    people[p].type = 'infected_retired'
     # Update infection status and type
     for p in range(len(people)):
         if people[p].inf_status > 0 and people[p].inf_status < infection_duration: # People still infectious
@@ -49,9 +60,23 @@ def check_infection(people, places, R_0, infection_duration):
             N_workers_infected += 1
         elif person.type == 'infected_retired':
             N_retireds_infected += 1
+    return {'infected_students':N_students_infected, 'infected_workers':N_workers_infected, 'infected_retired':N_retireds_infected}
 
+# Function that start the infection
+def start_infection(people, N_0):
+    N = len(people)
+    first_infected = list(np.random.choice(range(N), size=min(N, N_0), replace=False))
+    for p in first_infected:
+        people[p].inf_status = 1
+        if people[p].type == 'healthy_student':
+            people[p].type = 'infected_student'
+        elif people[p].type == 'healthy_worker':
+            people[p].type = 'infected_worker'
+        elif people[p].type == 'healthy_retired':
+            people[p].type = 'infected_retired'
+    return first_infected
 
-# Parameters from setting.py
+# Parameters from setting.py----------------------------------------------------
 N_steps = set.N_steps
 N_people = set.N_people
 environment_dim = [set.Xdim, set.Ydim]
@@ -77,11 +102,16 @@ for i in range(set.N_students):
     x = person(i, environment_dim, places, set.stud_trans_mat, 'healthy_student', 0)
     people.append(x)
 for j in range(i+1, i+1+set.N_workers):
-    x = person(j, environment_dim, places, set.work_trans_mat, 'healty_worker', 0)
+    x = person(j, environment_dim, places, set.work_trans_mat, 'healthy_worker', 0)
     people.append(x)
 for k in range(j+1, j+1+set.N_retireds):
-    x = person(k, environment_dim, places, set.ret_trans_mat, 'healty_retired', 0)
+    x = person(k, environment_dim, places, set.ret_trans_mat, 'healthy_retired', 0)
     people.append(x)
+
+# Start infection
+first_infected = start_infection(people, set.N_0)
+for f in first_infected:
+    print(people[f])
 
 # Plot options
 sizes = {'person':1, 'place':4}
@@ -89,8 +119,8 @@ sizes = {'person':1, 'place':4}
 # Columns 'step' 'person' 'X' 'Y' 'meta_type' 'type' 'infection_status' 'size'
 # Firstly populate a list of rows
 moveS_list = []
+inf_count = []
 for i in range(N_steps):
-    print('Step '+str(i+1))
     static_places_list = [{'step':i+1, 'person':j, 'X':places[j-N_people][0], 'Y':places[j-N_people][1],
                            'meta_type':'place', 'type':places_type[j-N_people], 'infection_status':0, 'size':sizes['place']} for j in range(N_people, N_people+N_places)]
     move_list = []
@@ -99,17 +129,19 @@ for i in range(N_steps):
         move_dict = {'step':i+1, 'person':people[p].id, 'X':people[p].position[0], 'Y':people[p].position[1],
                      'meta_type':'person', 'type':people[p].type, 'infection_status':people[p].inf_status, 'size':sizes['person']}
         move_list.append(move_dict)
-    check_infection(people, static_places_list, set.R_0, set.infection_duration)
+    inf_count.append(check_infection(people, static_places_list, set.R_0, set.infection_duration))
     moveS_list.extend(static_places_list)
     moveS_list.extend(move_list)
 # Then convert to dataframe
 moveS_df = pd.DataFrame(moveS_list)
+infected_count = pd.DataFrame(inf_count)
+print(infected_count)
 
 # Plot--------------------------------------------------------------------------
 sizes = {'person':2, 'place':4}
 move_sim = px.scatter(moveS_df, x='X', y='Y', animation_frame='step', animation_group='person', symbol='meta_type', color='type', size='size',
                  range_x=[0, environment_dim[0]], range_y=[0, environment_dim[1]],
-                 color_discrete_sequence=['blue', 'saddleBrown', 'Cyan', 'deepSkyBlue', 'grey', 'springGreen', 'forestGreen', 'darkGreen'])
+                 color_discrete_sequence=['blue', 'saddleBrown', 'Cyan', 'deepSkyBlue', 'grey', 'springGreen', 'forestGreen', 'darkGreen', 'crimson', 'red', 'darkred'])
 move_sim.update_layout({'xaxis':{'tick0':0, 'dtick':1, 'gridwidth':4*sizes['person']},
                         'yaxis':{'tick0':0, 'dtick':1, 'gridwidth':4*sizes['person']}})
                    #'width':800, 'height':800})
