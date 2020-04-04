@@ -51,7 +51,10 @@ class person:
 # Function computing random integer according to a distribution as list
 def rand_from_list(p):
     if abs(1. - sum(p)) > 1e-6:
-        print(p)
+        new_p = []
+        for i in range(len(p)):
+            new_p.append(round(p[i], 2))
+        p = new_p
     N = len(p)
     x = np.random.random()
     s = 0
