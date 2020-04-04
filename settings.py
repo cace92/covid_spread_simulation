@@ -1,29 +1,33 @@
 # SETTING VALUES----------------------------------------------------------------
-# Time properties
-N_steps = 10
-frame_duration = 100
-
-# Infection properties
-infection_duration = 5
-R_0 = 2
-
 # Environment properties
 Xdim = 10
 Ydim = 10
 
+# Time properties
+N_days = 10
+one_day = Xdim + Ydim # steps
+N_steps = N_days * one_day
+frame_duration = 100
+
+# Infection properties
+infection_duration_in_days = 6
+infection_duration = infection_duration_in_days * one_day
+R_0 = 10
+N_0 = 2
+
 # People properties
 N_students = 2
-N_workers = 2
-N_retireds = 2
+N_workers = 1
+N_retireds = 1
 
 N_people = N_students + N_workers + N_retireds
 
 # Places properties
 N_schools = 1
-N_jobs = 1
-N_sports = 1
+N_jobs = 0
+N_sports = 0
 N_shops = 1
-N_transports = 2
+N_transports = 1
 
 N_places = N_schools + N_jobs + N_sports + N_shops + N_transports
 
@@ -42,9 +46,14 @@ N_places_list = [1, N_schools, N_jobs, N_sports, N_shops]
 from_trans_list = [0]*(1+N_places)
 pos = 0
 for i in range(len(N_places_list)):
-    choice = pos + np.random.randint(0, N_places_list[i])
-    from_trans_list[choice] = prob[i]
-    pos += N_places_list[i]
+    if N_places_list[i] > 1:
+        choice = pos + np.random.randint(0, N_places_list[i])
+        from_trans_list[choice] = prob[i]
+        pos += N_places_list[i]
+    elif N_places_list[i] == 1:
+        from_trans_list[pos] = prob[i]
+        pos += N_places_list[i]
+from_trans_list[N_places] = 1-sum(from_trans_list[:(N_places-1)])
 temp = []
 for i in range(N_places+1):
     if i < (N_places+1-N_transports):
@@ -68,9 +77,14 @@ N_places_list = [1, N_schools, N_jobs, N_sports, N_shops]
 from_trans_list = [0]*(1+N_places)
 pos = 0
 for i in range(len(N_places_list)):
-    choice = pos + np.random.randint(0, N_places_list[i])
-    from_trans_list[choice] = prob[i]
-    pos += N_places_list[i]
+    if N_places_list[i] > 1:
+        choice = pos + np.random.randint(0, N_places_list[i])
+        from_trans_list[choice] = prob[i]
+        pos += N_places_list[i]
+    elif N_places_list[i] == 1:
+        from_trans_list[pos] = prob[i]
+        pos += N_places_list[i]
+from_trans_list[N_places] = 1-sum(from_trans_list[:(N_places-1)])
 temp = []
 for i in range(N_places+1):
     if i < (N_places+1-N_transports):
@@ -94,9 +108,14 @@ N_places_list = [1, N_schools, N_jobs, N_sports, N_shops]
 from_trans_list = [0]*(1+N_places)
 pos = 0
 for i in range(len(N_places_list)):
-    choice = pos + np.random.randint(0, N_places_list[i])
-    from_trans_list[choice] = prob[i]
-    pos += N_places_list[i]
+    if N_places_list[i] > 1:
+        choice = pos + np.random.randint(0, N_places_list[i])
+        from_trans_list[choice] = prob[i]
+        pos += N_places_list[i]
+    elif N_places_list[i] == 1:
+        from_trans_list[pos] = prob[i]
+        pos += N_places_list[i]
+from_trans_list[N_places] = 1-sum(from_trans_list[:(N_places-1)])
 temp = []
 for i in range(N_places+1):
     if i < (N_places+1-N_transports):
