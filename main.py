@@ -1,5 +1,3 @@
-import plotly.express as px
-from plotly.subplots import make_subplots
 import pandas as pd
 import numpy as np
 
@@ -110,8 +108,8 @@ for k in range(j+1, j+1+set.N_retireds):
 
 # Start infection
 first_infected = start_infection(people, set.N_0)
-for f in first_infected:
-    print(people[f])
+x = person(len(people), environment_dim, places, set.stud_trans_mat, 'immune_student', set.infection_duration+1)
+people.append(x) # Add one immune student to get true colors
 
 # Plot options
 sizes = {'person':1, 'place':4}
@@ -121,13 +119,19 @@ sizes = {'person':1, 'place':4}
 moveS_list = []
 inf_count = []
 for i in range(N_steps):
-    static_places_list = [{'step':i+1, 'person':j, 'X':places[j-N_people][0], 'Y':places[j-N_people][1],
-                           'meta_type':'place', 'type':places_type[j-N_people], 'infection_status':0, 'size':sizes['place']} for j in range(N_people, N_people+N_places)]
+    static_places_list = [{'step':i+1, 'person':j+1, 'X':places[j-N_people][0], 'Y':places[j-N_people][1],
+                           'meta_type':'place', 'type':places_type[j-N_people], 'infection_status':0, 'color':'place', 'size':sizes['place']} for j in range(N_people, N_people+N_places)]
     move_list = []
     for p in range(len(people)):
         people[p].move()
+        if people[p].type == 'healthy_student' or (people[p].type == 'healthy_worker' or people[p].type == 'healthy_retired'):
+            color = 'healthy'
+        elif people[p].type == 'infected_student' or (people[p].type == 'infected_worker' or people[p].type == 'infected_retired'):
+            color = 'infected'
+        elif people[p].type == 'immune_student' or (people[p].type == 'immune_worker' or people[p].type == 'immune_retired'):
+            color = 'immune'
         move_dict = {'step':i+1, 'person':people[p].id, 'X':people[p].position[0], 'Y':people[p].position[1],
-                     'meta_type':'person', 'type':people[p].type, 'infection_status':people[p].inf_status, 'size':sizes['person']}
+                     'meta_type':'person', 'type':people[p].type, 'infection_status':people[p].inf_status, 'color':color, 'size':sizes['person']}
         move_list.append(move_dict)
     inf_count.append(check_infection(people, static_places_list, set.R_0, set.infection_duration))
     moveS_list.extend(static_places_list)
@@ -135,15 +139,5 @@ for i in range(N_steps):
 # Then convert to dataframe
 moveS_df = pd.DataFrame(moveS_list)
 infected_count = pd.DataFrame(inf_count)
-print(infected_count)
-
-# Plot--------------------------------------------------------------------------
-sizes = {'person':2, 'place':4}
-move_sim = px.scatter(moveS_df, x='X', y='Y', animation_frame='step', animation_group='person', symbol='meta_type', color='type', size='size',
-                 range_x=[0, environment_dim[0]], range_y=[0, environment_dim[1]],
-                 color_discrete_sequence=['blue', 'saddleBrown', 'Cyan', 'deepSkyBlue', 'grey', 'springGreen', 'forestGreen', 'darkGreen', 'crimson', 'red', 'darkred'])
-move_sim.update_layout({'xaxis':{'tick0':0, 'dtick':1, 'gridwidth':4*sizes['person']},
-                        'yaxis':{'tick0':0, 'dtick':1, 'gridwidth':4*sizes['person']}})
-                   #'width':800, 'height':800})
-move_sim.layout.updatemenus[0].buttons[0].args[1]["frame"]["duration"] = set.frame_duration
-move_sim.show()
+moveS_df.to_excel('moves.xlsx')
+infected_count.to_excel('count.xlsx')
