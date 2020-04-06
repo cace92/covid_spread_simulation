@@ -1,33 +1,33 @@
 # SETTING VALUES----------------------------------------------------------------
 # Environment properties
-Xdim = 10
-Ydim = 10
+Xdim = 20
+Ydim = 20
 
 # Time properties
-N_days = 10
+N_days = 60
 one_day = Xdim + Ydim # steps
 N_steps = N_days * one_day
-frame_duration = 100
+frame_duration = 50
 
 # Infection properties
-infection_duration_in_days = 6
+infection_duration_in_days = 10
 infection_duration = infection_duration_in_days * one_day
-R_0 = 10
-N_0 = 2
+R_0 = 1.5*3
+N_0 = 20
 
 # People properties
-N_students = 2
-N_workers = 1
-N_retireds = 1
+N_students = 20
+N_workers = 20
+N_retireds = 20
 
 N_people = N_students + N_workers + N_retireds
 
 # Places properties
 N_schools = 1
-N_jobs = 0
-N_sports = 0
-N_shops = 1
-N_transports = 1
+N_jobs = 3
+N_sports = 1
+N_shops = 2
+N_transports = 2
 
 N_places = N_schools + N_jobs + N_sports + N_shops + N_transports
 
